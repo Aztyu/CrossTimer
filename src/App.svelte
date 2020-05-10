@@ -83,8 +83,8 @@
 				stop = true;
 				break;
 			case 'reset':
-				stop = false;
 				time = 0;
+				stop = false;
 				break;
 		}
 	}
@@ -96,25 +96,27 @@
 </script>
 
 <main>
-	<div>
-		<h1>Timer</h1>
-		
-		<p>
-			<span>Rounds</span>
-			<input bind:value={rounds} />
-		</p>
-		{#each timers as time}
-			<span>
-				<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
-			</span>
-		{/each}
-		<button on:click={addTime}>Add time</button>
-	</div>
+	{#if time === 0 }
+		<div>
+			<h1>Timer</h1>
+			
+			<p>
+				<span>Rounds</span>
+				<input bind:value={rounds} />
+			</p>
+			{#each timers as time}
+				<span>
+					<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
+				</span>
+			{/each}
+			<button on:click={addTime}>Add time</button>
+		</div>
+	{/if}
 
-	<Display 
-		time={time} 
-		name={name} 
-		currentRound={currentRound} 
+	<Display
+		time={time}
+		name={name}
+		currentRound={currentRound}
 		rounds={rounds}
 		stop={stop}
 		on:timer={handleTimer}
@@ -124,9 +126,11 @@
 <style>
 	main {
 		text-align: center;
-		padding: 1em;
+		/*padding: 1em;*/
 		max-width: 240px;
-		margin: 0 auto;
+		/* margin: 0 auto; */
+		display: flex;
+    	flex-direction: column;
 	}
 
 	h1 {

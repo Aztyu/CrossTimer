@@ -15,6 +15,10 @@
     
     $: {
         sendUpdateTimer(+minutes * 60 + +seconds, name);
+        if (+seconds > 59) {
+            minutes = +minutes + 1;
+            seconds = seconds%60;
+        }
     }
 
 	let minutes = 0;
