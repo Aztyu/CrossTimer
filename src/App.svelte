@@ -5,6 +5,7 @@
 	let name = '';
 	let currentTimeIdx = 0;
 	let currentRound = 1;
+	let stop = false;
 
 	let nextId = 3;
 
@@ -20,6 +21,9 @@
 
 	// Business logic
 	var timer = function() {
+		if (stop) {
+			return;
+		}
 		time = time - 1;
 		if (time > 0) {
 			setTimeout(timer, 1000);
@@ -57,6 +61,7 @@
 			return obj.id === timeData.id
 		});
 		timer[0].time = timeData.time;
+		timer[0].name = timeData.name;
 	}
 
 	// Button action
@@ -69,33 +74,60 @@
 		currentTimeIdx = 0;
 		launchTimer(0);
 	}
+
+	function stopTimer() {
+		stop = true;
+	}
+
+	function resumeTimer() {
+		stop = false;
+		setTimeout(timer, 1000);
+	}
+
+	function resetTimer() {
+		stop = false;
+		time = 0;
+	}
 </script>
 
 <main>
-	<h1>Timer</h1>
-	
-	<p>
-		<span>Rounds</span>
-		<input bind:value={rounds} />
-	</p>
-	{#each timers as time}
-		<span>
-			<Timer id={time.id} on:update={handleUpdate}/>
-		</span>
-	{/each}
-	<button on:click={addTime}>Add time</button>
+	<div>
+		<h1>Timer</h1>
+		
+		<p>
+			<span>Rounds</span>
+			<input bind:value={rounds} />
+		</p>
+		{#each timers as time}
+			<span>
+				<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
+			</span>
+		{/each}
+		<button on:click={addTime}>Add time</button>
+	</div>
 
-	<p>
-		<button on:click={startTimer}>Start</button>
-	</p>
+	<div>
+		<p>
+			{#if time === 0 }
+				<button on:click={startTimer}>Start</button>
+			{:else}
+				{#if stop === true }
+					<button on:click={resumeTimer}>Resume</button>
+					<button on:click={resetTimer}>Reset</button>
+				{:else}
+					<button on:click={stopTimer}>Stop</button>
+				{/if}
+			{/if}
+		</p>
 
-	<p>
-		{#if time > 0 }
-			<p>Round {currentRound}/{rounds}</p>
-			<p>{name}</p>
-			<p>Time left : {time}</p>
-		{/if}
-	</p>
+		<p>
+			{#if time > 0 }
+				<p>Round {currentRound}/{rounds}</p>
+				<p>{name}</p>
+				<p>Time left : {time}</p>
+			{/if}
+		</p>
+	</div>
 </main>
 
 <style>

@@ -3,16 +3,18 @@
     const dispatch = createEventDispatcher();
 
     export let id;
+    export let name;
 
-    function sendUpdateTimer(time) {
+    function sendUpdateTimer(time, name) {
 		dispatch('update', {
             id: id,
-			time: time
+			time: time,
+            name: name,
 		});
     }
     
     $: {
-        sendUpdateTimer(+minutes * 60 + +seconds);
+        sendUpdateTimer(+minutes * 60 + +seconds, name);
     }
 
 	let minutes = 0;
@@ -20,8 +22,9 @@
 </script>
 
 <p>
-    <input bind:value={minutes}/>
+    <input bind:value={minutes} />
     <span>m </span>
-    <input bind:value={seconds}/>
+    <input bind:value={seconds} />
     <span>s </span>
+    <input bind:value={name} />
 </p>
