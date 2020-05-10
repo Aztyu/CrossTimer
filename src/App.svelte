@@ -1,14 +1,10 @@
 <script>
 	import Timer from './Timer.svelte';
-
-	export let counter;
-
-	let minutes = 0;
-	let seconds = 0;
 	
 	let time = 0;
 	let name = '';
 	let currentTimeIdx = 0;
+	let currentRound = 1;
 
 	let nextId = 3;
 
@@ -20,6 +16,8 @@
 		{ id: 2, time: 0, name: 'Rest' }
 	];
 
+	let rounds = 1;
+
 	// Business logic
 	var timer = function() {
 		time = time - 1;
@@ -30,8 +28,17 @@
 			}
 		} else {
 			beepLong.play();
+			// End of timers
 			if (++currentTimeIdx < timers.length) {
 				launchTimer(currentTimeIdx);
+			// Check if there are rounds left
+			} else if (currentRound < rounds) {
+				currentRound = ++currentRound;
+				currentTimeIdx = 0;
+				launchTimer(0);
+			// End of the rounds and timers
+			} else {
+				setTimeout(function() { beepLong.play()}, 500);
 			}
 		}
 	};
@@ -58,6 +65,7 @@
 	}
 
 	function startTimer() {
+		currentRound = 1;
 		currentTimeIdx = 0;
 		launchTimer(0);
 	}
@@ -66,6 +74,10 @@
 <main>
 	<h1>Timer</h1>
 	
+	<p>
+		<span>Rounds</span>
+		<input bind:value={rounds} />
+	</p>
 	{#each timers as time}
 		<span>
 			<Timer id={time.id} on:update={handleUpdate}/>
@@ -79,6 +91,7 @@
 
 	<p>
 		{#if time > 0 }
+			<p>Round {currentRound}/{rounds}</p>
 			<p>{name}</p>
 			<p>Time left : {time}</p>
 		{/if}
