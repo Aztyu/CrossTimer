@@ -5,17 +5,23 @@
 
 	let minutes = 0;
 	let seconds = 0;
+	
 	let time = 0;
+	let name = '';
+	let currentTimeIdx = 0;
+
+	let nextId = 3;
 
 	var beepLong = new Audio('sound/beeplong.mp3');
 	var beepCourt = new Audio('sound/beepcourt.mp3');
 
 	let timers = [
-		{ id: 1, time: 0 }
+		{ id: 1, time: 0, name: 'Work' },
+		{ id: 2, time: 0, name: 'Rest' }
 	];
 
+	// Business logic
 	var timer = function() {
-		console.log('1sec passée');
 		time = time - 1;
 		if (time > 0) {
 			setTimeout(timer, 1000);
@@ -24,15 +30,19 @@
 			}
 		} else {
 			beepLong.play();
+			if (++currentTimeIdx < timers.length) {
+				launchTimer(currentTimeIdx);
+			}
 		}
 	};
 
-	function startTimer() {
-		console.log(timers);
-		time = timers[0].time;
+	function launchTimer(idx) {
+		time = timers[idx].time;
+		name = timers[idx].name;
 		setTimeout(timer, 1000);
 	}
 
+	// Event handler 
 	function handleUpdate(event) {
 		const timeData = event.detail;
 		
@@ -41,14 +51,27 @@
 		});
 		timer[0].time = timeData.time;
 	}
+
+	// Button action
+	function addTime() {
+		timers = [...timers, {id: nextId++, time: 0}]
+	}
+
+	function startTimer() {
+		currentTimeIdx = 0;
+		launchTimer(0);
+	}
 </script>
 
 <main>
 	<h1>Timer</h1>
 	
 	{#each timers as time}
-		<Timer id={time.id} on:update={handleUpdate}/>
+		<span>
+			<Timer id={time.id} on:update={handleUpdate}/>
+		</span>
 	{/each}
+	<button on:click={addTime}>Add time</button>
 
 	<p>
 		<button on:click={startTimer}>Start</button>
@@ -56,7 +79,8 @@
 
 	<p>
 		{#if time > 0 }
-			<span>Time left : {time}</span>
+			<p>{name}</p>
+			<p>Time left : {time}</p>
 		{/if}
 	</p>
 </main>
