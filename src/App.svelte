@@ -2,25 +2,28 @@
 	import Timer from './Timer.svelte';
 	import Display from './Display.svelte';
 	
+	/* Initialize data */
 	let time = 0;
 	let name = '';
-	let currentTimeIdx = 0;
-	let currentRound = 1;
-	let stop = false;
-
-	let nextId = 3;
-
-	var beepLong = new Audio('sound/beeplong.mp3');
-	var beepCourt = new Audio('sound/beepcourt.mp3');
-
+	let rounds = 1;
 	let timers = [
 		{ id: 1, time: 0, name: 'Work' },
 		{ id: 2, time: 0, name: 'Rest' }
 	];
 
-	let rounds = 1;
+	// Time before timer start in seconds
+	const preparationTime = 10;
 
-	// Business logic
+	var beepLong = new Audio('sound/beeplong.mp3');
+	var beepCourt = new Audio('sound/beepcourt.mp3');
+
+	/* Internal values */
+	let nextId = 3; //keep track of timers
+	let currentTimeIdx = 0;
+	let currentRound = 1;
+	let stop = false;
+
+	/* Business logic */
 	var timer = function() {
 		if (stop) {
 			return;
@@ -54,7 +57,9 @@
 		setTimeout(timer, 1000);
 	}
 
-	// Event handler 
+	/* Event handler */
+
+	// Update array with data from component
 	function handleUpdate(event) {
 		const timeData = event.detail;
 		
@@ -65,6 +70,7 @@
 		timer[0].name = timeData.name;
 	}
 
+	// react to action in Display componenent
 	function handleTimer(event) {
 		const timerData = event.detail;
 		
@@ -72,8 +78,11 @@
 		switch(event.detail.action) {
 			case 'start':
 				currentRound = 1;
-				currentTimeIdx = 0;
-				launchTimer(0);
+				currentTimeIdx = -1;
+				time = preparationTime;
+				name = 'Get ready';
+				currentTimeIdx = -1;
+				setTimeout(timer, 1000);
 				break;
 			case 'resume':
 				stop = false;
@@ -89,7 +98,7 @@
 		}
 	}
 
-	// Button action
+	/* Button action */
 	function addTime() {
 		timers = [...timers, {id: nextId++, time: 0}]
 	}
@@ -126,9 +135,7 @@
 <style>
 	main {
 		text-align: center;
-		/*padding: 1em;*/
 		max-width: 240px;
-		/* margin: 0 auto; */
 		display: flex;
     	flex-direction: column;
 	}
