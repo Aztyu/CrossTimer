@@ -1,4 +1,34 @@
 <script>
+    export let time;
+    export let name;
+    export let currentRound;
+    export let rounds;
+    export let stop;
+
+    import { createEventDispatcher } from 'svelte';
+    const dispatch = createEventDispatcher();
+
+    function send(action) {
+        dispatch('timer', {
+            action: action,
+		});
+    }
+
+    function startTimer() {
+        send('start');
+    }
+
+    function resumeTimer() {
+        send('resume');
+    }
+
+    function resetTimer() {
+        send('reset');
+    }
+
+    function stopTimer() {
+        send('stop');
+    }
 </script>
 
 <div>

@@ -1,5 +1,6 @@
 <script>
 	import Timer from './Timer.svelte';
+	import Display from './Display.svelte';
 	
 	let time = 0;
 	let name = '';
@@ -64,29 +65,33 @@
 		timer[0].name = timeData.name;
 	}
 
+	function handleTimer(event) {
+		const timerData = event.detail;
+		
+		// Manage button actions from Display
+		switch(event.detail.action) {
+			case 'start':
+				currentRound = 1;
+				currentTimeIdx = 0;
+				launchTimer(0);
+				break;
+			case 'resume':
+				stop = false;
+				setTimeout(timer, 1000);
+				break;
+			case 'stop':
+				stop = true;
+				break;
+			case 'reset':
+				stop = false;
+				time = 0;
+				break;
+		}
+	}
+
 	// Button action
 	function addTime() {
 		timers = [...timers, {id: nextId++, time: 0}]
-	}
-
-	function startTimer() {
-		currentRound = 1;
-		currentTimeIdx = 0;
-		launchTimer(0);
-	}
-
-	function stopTimer() {
-		stop = true;
-	}
-
-	function resumeTimer() {
-		stop = false;
-		setTimeout(timer, 1000);
-	}
-
-	function resetTimer() {
-		stop = false;
-		time = 0;
 	}
 </script>
 
@@ -106,28 +111,14 @@
 		<button on:click={addTime}>Add time</button>
 	</div>
 
-	<div>
-		<p>
-			{#if time === 0 }
-				<button on:click={startTimer}>Start</button>
-			{:else}
-				{#if stop === true }
-					<button on:click={resumeTimer}>Resume</button>
-					<button on:click={resetTimer}>Reset</button>
-				{:else}
-					<button on:click={stopTimer}>Stop</button>
-				{/if}
-			{/if}
-		</p>
-
-		<p>
-			{#if time > 0 }
-				<p>Round {currentRound}/{rounds}</p>
-				<p>{name}</p>
-				<p>Time left : {time}</p>
-			{/if}
-		</p>
-	</div>
+	<Display 
+		time={time} 
+		name={name} 
+		currentRound={currentRound} 
+		rounds={rounds}
+		stop={stop}
+		on:timer={handleTimer}
+	/>
 </main>
 
 <style>
