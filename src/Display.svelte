@@ -79,11 +79,16 @@
     .action {
         font-size: 2em;
         margin-top: 24px;
+
+        position: absolute;
+        width: 98%;
+        text-align: end;
     }
 
     .round {
         font-size: 3em;
         font-weight: 700;
+        line-height: 1.5em;
     }
 
     .round span {
@@ -91,8 +96,9 @@
     }
 
     .time {
-        font-size: 13em;
+        font-size: 11em;
         font-weight: 400;
+        line-height: 1em;
     }
 
     .exercise {

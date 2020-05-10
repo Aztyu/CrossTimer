@@ -26,9 +26,9 @@
 </script>
 
 <p>
-    <input bind:value={minutes} />
+    <input type="number" bind:value={minutes} />
     <span>m </span>
-    <input bind:value={seconds} />
+    <input type="number" bind:value={seconds} />
     <span>s </span>
     <input bind:value={name} />
 </p>
