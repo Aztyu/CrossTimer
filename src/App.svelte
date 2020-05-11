@@ -5,10 +5,11 @@
 	/* Initialize data */
 	let time = 0;
 	let name = '';
+	let color = '';
 	let rounds = 1;
 	let timers = [
-		{ id: 1, time: 0, name: 'Work' },
-		{ id: 2, time: 0, name: 'Rest' }
+		{ id: 1, time: 0, name: 'Work', color: 'yellow' },
+		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
 
 	// Time before timer start in seconds
@@ -22,6 +23,7 @@
 	let currentTimeIdx = 0;
 	let currentRound = 1;
 	let stop = false;
+	let colors = ['blue', 'yellow', 'green'];
 
 	/* Business logic */
 	var timer = function() {
@@ -54,8 +56,30 @@
 	function launchTimer(idx) {
 		time = timers[idx].time;
 		name = timers[idx].name;
+		color = timers[idx].color;
 		setTimeout(timer, 1000);
 	}
+
+	function nextRandomColor() {
+		// TODO better color managing
+		return colors[Math.floor(Math.random() * colors.length)];
+	}
+
+	function closeFullscreen() {
+        if (document.fullscreenElement === null) {
+            return;
+        }
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
 
 	/* Event handler */
 
@@ -81,7 +105,7 @@
 				currentTimeIdx = -1;
 				time = preparationTime;
 				name = 'Get ready';
-				currentTimeIdx = -1;
+				color = 'green';
 				setTimeout(timer, 1000);
 				break;
 			case 'resume':
@@ -94,13 +118,14 @@
 			case 'reset':
 				time = 0;
 				stop = false;
+				closeFullscreen();
 				break;
 		}
 	}
 
 	/* Button action */
 	function addTime() {
-		timers = [...timers, {id: nextId++, time: 0}]
+		timers = [...timers, {id: nextId++, time: 0, color: nextRandomColor()}]
 	}
 </script>
 
@@ -125,6 +150,7 @@
 	<Display
 		time={time}
 		name={name}
+		color={color}
 		currentRound={currentRound}
 		rounds={rounds}
 		stop={stop}

@@ -1,6 +1,7 @@
 <script>
     export let time;
     export let name;
+    export let color;
     export let currentRound;
     export let rounds;
     export let stop;
@@ -16,7 +17,37 @@
         return time < 10 ? '0' + time : time;
     }
 
-    // Component function
+    var elem = document.documentElement;
+
+    function openFullscreen() {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+        }
+
+    function closeFullscreen() {
+        if (document.fullscreenElement === null) {
+            return;
+        }
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
+    /* Component function */
     function send(action) {
         dispatch('timer', {
             action: action,
@@ -24,6 +55,7 @@
     }
 
     function startTimer() {
+        openFullscreen();
         send('start');
     }
 
@@ -32,6 +64,7 @@
     }
 
     function resetTimer() {
+        closeFullscreen();
         send('reset');
     }
 
@@ -42,10 +75,13 @@
     $: {
         displayMinute = format(Math.floor(time/60));
         displaySeconds = format(time%60);
+        if (time === 0) {
+            closeFullscreen();
+        }
     }
 </script>
 
-<div class="main">
+<div class="main {color}">
     <div class="action">
         {#if time === 0 }
             <button on:click={startTimer}>Start</button>
@@ -69,8 +105,29 @@
 </div>
 
 <style>
-    .main {
+    .yellow {
         background-color: #fdfd72;
+    }
+    .yellow .exercise {
+        color: #898e3d;
+    }
+
+    .green {
+        background-color: #47e647;
+    }
+    .green .exercise {
+        color: #3c7b3c;
+    }
+
+    .blue {
+        background-color: #24c2ff;
+    }
+    .blue .exercise {
+        color: #396677;
+    }
+
+    .main {
+        
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -104,7 +161,6 @@
     .exercise {
         font-size: 4em;
         font-weight: 700;
-        color: #898e3d;
     }
 
     .uppercase {
