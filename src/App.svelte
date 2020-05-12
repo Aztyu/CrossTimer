@@ -131,17 +131,16 @@
 
 <main>
 	{#if time === 0 }
-		<div>
+		<div class="form main-font">
 			<h1>Timer</h1>
-			
-			<p>
-				<span>Rounds</span>
-				<input bind:value={rounds} />
-			</p>
+			<div class="rounds">
+				<span class="flex">Rounds</span>
+				<div class="flex-2">
+					<input bind:value={rounds} />
+				</div>
+			</div>
 			{#each timers as time}
-				<span>
-					<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
-				</span>
+				<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
 			{/each}
 			<button on:click={addTime}>Add time</button>
 		</div>
@@ -161,9 +160,8 @@
 <style>
 	main {
 		text-align: center;
-		max-width: 240px;
 		display: flex;
-    	flex-direction: column;
+		flex-direction: column;
 	}
 
 	h1 {
@@ -173,9 +171,33 @@
 		font-weight: 100;
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	button {
+		margin: 8px;
+	}
+
+	.form {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		max-width: 400px;
+    	margin: auto;
+	}
+
+	.flex {
+		flex: 1;
+	}
+
+	.flex-2 {
+		flex: 2;
+	}
+
+	.rounds {
+		align-items: center;
+		margin: 8px;
+    	display: flex;
+	}
+
+	.rounds input {
+		width: 100%;
 	}
 </style>

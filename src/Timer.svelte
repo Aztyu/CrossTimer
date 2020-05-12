@@ -25,10 +25,42 @@
 	let seconds = 0;
 </script>
 
-<p>
-    <input type="number" bind:value={minutes} />
-    <span>m </span>
-    <input type="number" bind:value={seconds} />
-    <span>s </span>
-    <input bind:value={name} />
-</p>
+<div class="timer">
+    <div class="flex-2">
+        <input type="number" onfocus="this.value=''" bind:value={minutes} />
+        <span>:</span>
+        <input type="number" onfocus="this.value=''" bind:value={seconds} />
+    </div>
+    <div class="flex-3">
+        <input class="exercise" bind:value={name} />
+    </div>
+</div>
+
+<style>
+    .timer {
+        display: flex;
+        margin: 8px;
+    }
+
+    .flex-2 {
+        flex: 2;
+    }
+
+    .flex-2 input {
+        padding: 0.4em 0.2em 0.4em 0.1em;
+    }
+
+    .flex-3 {
+        flex: 3;
+    }
+    
+    input {
+        width: 48px;
+        text-align: right;
+    }
+
+    input.exercise {
+        width: 100%;
+        text-align: center;
+    }
+</style>
