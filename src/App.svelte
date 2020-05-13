@@ -11,12 +11,15 @@
 		{ id: 1, time: 0, name: 'Work', color: 'yellow' },
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
+	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
 
 	// Time before timer start in seconds
 	const preparationTime = 10;
 
 	var beepLong = new Audio('sound/beeplong.mp3');
 	var beepCourt = new Audio('sound/beepcourt.mp3');
+	beepLong.volume = volume/100;
+	beepCourt.volume = volume/100;
 
 	/* Internal values */
 	let nextId = 3; //keep track of timers
@@ -123,6 +126,13 @@
 		}
 	}
 
+	function handleVolume(event) {
+		localStorage.setItem('volume', event.detail.volume);
+		const volumeNb = event.detail.volume/100;
+		beepCourt.volume = volumeNb;
+		beepLong.volume = volumeNb;
+	}
+
 	/* Button action */
 	function addTime() {
 		timers = [...timers, {id: nextId++, time: 0, color: nextRandomColor()}]
@@ -153,7 +163,9 @@
 		currentRound={currentRound}
 		rounds={rounds}
 		stop={stop}
+		volume={volume}
 		on:timer={handleTimer}
+		on:volume={handleVolume}
 	/>
 </main>
 

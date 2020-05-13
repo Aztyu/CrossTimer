@@ -2,12 +2,16 @@
     export let time;
     export let name;
     export let color;
+    export let volume;
     export let currentRound;
     export let rounds;
     export let stop;
 
     let displayMinute = '00';
     let displaySeconds = '00';
+    let imgVolume = 'soundhigh';
+
+    let oldVolume = volume;
 
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
@@ -54,6 +58,26 @@
 		});
     }
 
+    function updateVolume(volume) {
+        if(volume !== oldVolume) {
+            oldVolume = volume;
+            
+            if (volume > 66) {
+                imgVolume = 'soundhigh';
+            } else if (volume > 33) {
+                imgVolume = 'soundmedium';
+            } else if (volume > 0) {
+                imgVolume = 'soundlow';
+            } else {
+                imgVolume = 'soundoff';
+            }
+
+            dispatch('volume', {
+                volume: volume,
+            });
+        }
+    }
+
     function startTimer() {
         openFullscreen();
         send('start');
@@ -78,6 +102,7 @@
         if (time === 0) {
             closeFullscreen();
         }
+        updateVolume(+volume);
     }
 </script>
 
@@ -95,12 +120,20 @@
         {/if}
     </div>
 
-    <div class="display">
-        {#if time > 0 }
-            <p class="uppercase round"><span>{currentRound}</span>/{rounds}</p>
-            <p class="uppercase time">{displayMinute}:{displaySeconds}</p>
-            <p class="uppercase exercise">{name}</p>
-        {/if}
+    <div class="main-display">
+        <div class="volume">
+            <input type="range" orient="vertical" min="0" max="100" bind:value={volume}>
+            <span>
+                <img src="image/{imgVolume}.png" alt="Sound icon" />
+            </span>
+        </div>
+        <div class="display">
+            {#if time > 0 }
+                <p class="uppercase round"><span>{currentRound}</span>/{rounds}</p>
+                <p class="uppercase time">{displayMinute}:{displaySeconds}</p>
+                <p class="uppercase exercise">{name}</p>
+            {/if}
+        </div>
     </div>
 </div>
 
@@ -127,10 +160,31 @@
     }
 
     .main {
-        
         flex: 1;
         display: flex;
         flex-direction: column;
+    }
+
+    .main-display {
+        flex-direction: row;
+        display: flex;
+        height: 100%;
+        align-items: center;
+    }
+
+    .volume {
+        display: flex;
+        flex-direction: column;
+        width: 74px;
+    }
+
+    .volume span {
+        margin-top: 15px;
+        font-size: 1.5em;
+        font-weight: 700;
+    }
+    .volume span img {
+        width: 32px;
     }
 
     .action {
@@ -172,5 +226,16 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+    }
+
+    input[type=range][orient=vertical]
+    {
+        writing-mode: bt-lr; /* IE */
+        -webkit-appearance: slider-vertical; /* WebKit */
+        width: 8px;
+        padding: 0 5px;
+
+        height: 300px;
+        margin-left: 32px;
     }
 </style>
