@@ -21,36 +21,6 @@
         return time < 10 ? '0' + time : time;
     }
 
-    var elem = document.documentElement;
-
-    function openFullscreen() {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) { /* Firefox */
-            elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE/Edge */
-            elem.msRequestFullscreen();
-        }
-        }
-
-    function closeFullscreen() {
-        if (document.fullscreenElement === null) {
-            return;
-        }
-
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-    }
-
     /* Component function */
     function send(action) {
         dispatch('timer', {
@@ -78,17 +48,11 @@
         }
     }
 
-    function startTimer() {
-        openFullscreen();
-        send('start');
-    }
-
     function resumeTimer() {
         send('resume');
     }
 
     function resetTimer() {
-        closeFullscreen();
         send('reset');
     }
 
@@ -99,143 +63,142 @@
     $: {
         displayMinute = format(Math.floor(time/60));
         displaySeconds = format(time%60);
-        if (time === 0) {
-            closeFullscreen();
-        }
         updateVolume(+volume);
     }
 </script>
 
-<div class="main {color}">
-    <div class="action">
-        {#if time === 0 }
-            <button on:click={startTimer}>Start</button>
-        {:else}
-            {#if stop === true }
-                <button on:click={resumeTimer}>Resume</button>
-                <button on:click={resetTimer}>Reset</button>
-            {:else}
-                <button on:click={stopTimer}>Stop</button>
-            {/if}
-        {/if}
-    </div>
-
-    <div class="main-display">
-        <div class="volume">
-            <input type="range" orient="vertical" min="0" max="100" bind:value={volume}>
-            <span>
-                <img src="image/{imgVolume}.png" alt="Sound icon" />
-            </span>
+{#if time > 0 }
+    <div class="timer {color}">
+        <div class="timer__button">
+                {#if stop === true }
+                    <button on:click={resumeTimer}>Resume</button>
+                    <button on:click={resetTimer}>Reset</button>
+                {:else}
+                    <button on:click={stopTimer}>Stop</button>
+                {/if}
         </div>
-        <div class="display">
-            {#if time > 0 }
-                <p class="uppercase round"><span>{currentRound}</span>/{rounds}</p>
-                <p class="uppercase time">{displayMinute}:{displaySeconds}</p>
-                <p class="uppercase exercise">{name}</p>
-            {/if}
+
+        <div class="timer__screen">
+            <div class="timer__screen__volume">
+                <input type="range" orient="vertical" min="0" max="100" bind:value={volume}>
+                <span>
+                    <img src="image/{imgVolume}.png" alt="Sound icon" />
+                </span>
+            </div>
+            <div class="timer__screen__display">
+                {#if time > 0 }
+                    <p class="timer__screen__display__round"><span>{currentRound}</span>/{rounds}</p>
+                    <p class="timer__screen__display__time">{displayMinute}:{displaySeconds}</p>
+                    <p class="timer__screen__display__exercise">{name}</p>
+                {/if}
+            </div>
         </div>
     </div>
-</div>
+{/if}
 
-<style>
+<style lang="scss">
+    .timer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        &__button {
+            font-size: 2em;
+            margin-top: 24px;
+
+            position: absolute;
+            width: 98%;
+            text-align: end;
+        }
+
+        &__screen {
+            flex-direction: row;
+            display: flex;
+            height: 100%;
+            align-items: center;
+
+            &__volume {
+                display: flex;
+                flex-direction: column;
+                width: 74px;
+
+                span {
+                    margin-top: 15px;
+                    font-size: 1.5em;
+                    font-weight: 700;
+
+                    img {
+                        width: 32px;
+                    }
+                }
+
+                input[type=range][orient=vertical]
+                {
+                    writing-mode: bt-lr; /* IE */
+                    -webkit-appearance: slider-vertical; /* WebKit */
+                    width: 8px;
+                    padding: 0 5px;
+
+                    height: 300px;
+                    margin-left: 32px;
+                }
+            }
+
+            &__display {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                p {
+                    text-transform: uppercase;
+                }
+
+                &__round {
+                    font-size: 3em;
+                    font-weight: 700;
+                    line-height: 1.5em;
+
+                    span {
+                        font-size: 2em;
+                    }
+                }
+
+                &__time {
+                    font-size: 11em;
+                    font-weight: 400;
+                    line-height: 1em;
+                }
+
+                &__exercise {
+                    font-size: 4em;
+                    font-weight: 700;
+                }
+            }
+        }
+    }
+
     .yellow {
         background-color: #fdfd72;
-    }
-    .yellow .exercise {
-        color: #898e3d;
+
+        .timer__screen__display__exercise {
+            color: #898e3d;
+        }
     }
 
     .green {
         background-color: #47e647;
-    }
-    .green .exercise {
-        color: #3c7b3c;
+
+        .timer__screen__display__exercise {
+            color: #3c7b3c;
+        }
     }
 
     .blue {
         background-color: #24c2ff;
-    }
-    .blue .exercise {
-        color: #396677;
-    }
 
-    .main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .main-display {
-        flex-direction: row;
-        display: flex;
-        height: 100%;
-        align-items: center;
-    }
-
-    .volume {
-        display: flex;
-        flex-direction: column;
-        width: 74px;
-    }
-
-    .volume span {
-        margin-top: 15px;
-        font-size: 1.5em;
-        font-weight: 700;
-    }
-    .volume span img {
-        width: 32px;
-    }
-
-    .action {
-        font-size: 2em;
-        margin-top: 24px;
-
-        position: absolute;
-        width: 98%;
-        text-align: end;
-    }
-
-    .round {
-        font-size: 3em;
-        font-weight: 700;
-        line-height: 1.5em;
-    }
-
-    .round span {
-        font-size: 2em;
-    }
-
-    .time {
-        font-size: 11em;
-        font-weight: 400;
-        line-height: 1em;
-    }
-
-    .exercise {
-        font-size: 4em;
-        font-weight: 700;
-    }
-
-    .uppercase {
-        text-transform: uppercase;
-    }
-
-    .display {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    input[type=range][orient=vertical]
-    {
-        writing-mode: bt-lr; /* IE */
-        -webkit-appearance: slider-vertical; /* WebKit */
-        width: 8px;
-        padding: 0 5px;
-
-        height: 300px;
-        margin-left: 32px;
+        .exercise {
+            color: #396677;
+        }
     }
 </style>

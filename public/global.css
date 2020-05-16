@@ -70,6 +70,14 @@ button:focus {
 	border-color: #666;
 }
 
-.main-font {
-	font-size: 1.5em;
+.flex {
+	flex: 1;
+}
+
+.flex-2 {
+	flex: 2;
+}
+
+.flex-3 {
+	flex: 3;
 }

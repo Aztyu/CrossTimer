@@ -12,6 +12,7 @@
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
 	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
+	var elem = document.documentElement;
 
 	// Time before timer start in seconds
 	const preparationTime = 10;
@@ -52,6 +53,7 @@
 			// End of the rounds and timers
 			} else {
 				setTimeout(function() { beepLong.play()}, 500);
+				closeFullscreen();
 			}
 		}
 	};
@@ -68,11 +70,22 @@
 		return colors[Math.floor(Math.random() * colors.length)];
 	}
 
+	function openFullscreen() {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+    }
+
 	function closeFullscreen() {
         if (document.fullscreenElement === null) {
             return;
         }
-
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.mozCancelFullScreen) {
@@ -109,6 +122,7 @@
 				time = preparationTime;
 				name = 'Get ready';
 				color = 'green';
+				openFullscreen();
 				setTimeout(timer, 1000);
 				break;
 			case 'resume':
@@ -133,26 +147,38 @@
 		beepLong.volume = volumeNb;
 	}
 
+	function handleDelete(event) {
+		let id = event.detail.id;
+
+		timers = timers.filter(obj => obj.id !== id );
+		let nextId = Math.max(...timers.map(timer => timer.id)) + 1;
+	}
+
 	/* Button action */
 	function addTime() {
 		timers = [...timers, {id: nextId++, time: 0, color: nextRandomColor()}]
 	}
+
+	function startTimer() {
+		handleTimer({detail: {action: 'start'}});
+    }
 </script>
 
 <main>
 	{#if time === 0 }
-		<div class="form main-font">
+		<div class="form">
 			<h1>Timer</h1>
-			<div class="rounds">
+			<div class="form__rounds">
 				<span class="flex">Rounds</span>
 				<div class="flex-2">
 					<input bind:value={rounds} />
 				</div>
 			</div>
 			{#each timers as time}
-				<Timer id={time.id} name={time.name} on:update={handleUpdate}/>
+				<Timer id={time.id} name={time.name} on:update={handleUpdate} on:delete={handleDelete} />
 			{/each}
 			<button on:click={addTime}>Add time</button>
+			<button on:click={startTimer}>Start</button>
 		</div>
 	{/if}
 
@@ -169,18 +195,12 @@
 	/>
 </main>
 
-<style>
+<style lang="scss">
 	main {
 		text-align: center;
 		display: flex;
 		flex-direction: column;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+		font-size: 1.5em;
 	}
 
 	button {
@@ -192,24 +212,23 @@
 		display: flex;
 		flex-direction: column;
 		max-width: 400px;
-    	margin: auto;
-	}
+		margin: auto;
+		
+		h1 {
+			color: #ff3e00;
+			text-transform: uppercase;
+			font-size: 4em;
+			font-weight: 100;
+		}
 
-	.flex {
-		flex: 1;
-	}
+		&__rounds {
+			align-items: center;
+			margin: 8px;
+			display: flex;
 
-	.flex-2 {
-		flex: 2;
-	}
-
-	.rounds {
-		align-items: center;
-		margin: 8px;
-    	display: flex;
-	}
-
-	.rounds input {
-		width: 100%;
+			input {
+				width: 100%;
+			}
+		}
 	}
 </style>

@@ -12,6 +12,12 @@
             name: name,
 		});
     }
+
+    function deleteTimer() {
+        dispatch('delete', {
+            id: id,
+        })
+    }
     
     $: {
         sendUpdateTimer(+minutes * 60 + +seconds, name);
@@ -31,36 +37,31 @@
         <span>:</span>
         <input type="number" onfocus="this.value=''" bind:value={seconds} />
     </div>
-    <div class="flex-3">
+    <div class="flex-2">
         <input class="exercise" bind:value={name} />
+    </div>
+    <div>
+        <button on:click={deleteTimer}>X</button> 
     </div>
 </div>
 
-<style>
+<style lang="scss">
     .timer {
         display: flex;
         margin: 8px;
-    }
 
-    .flex-2 {
-        flex: 2;
-    }
+        input[type=range] {
+            padding: 0.4em 0.2em 0.4em 0.1em;
+        }
 
-    .flex-2 input {
-        padding: 0.4em 0.2em 0.4em 0.1em;
-    }
+        input {
+            width: 48px;
+            text-align: right;
 
-    .flex-3 {
-        flex: 3;
-    }
-    
-    input {
-        width: 48px;
-        text-align: right;
-    }
-
-    input.exercise {
-        width: 100%;
-        text-align: center;
+            &.exercise {
+                width: 100%;
+                text-align: center;
+            }
+        }
     }
 </style>
