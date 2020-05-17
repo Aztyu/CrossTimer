@@ -7,12 +7,16 @@
 	let name = '';
 	let color = '';
 	let rounds = 1;
+	let useVoice = false;
 	let timers = [
 		{ id: 1, time: 0, name: 'Work', color: 'yellow' },
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
 	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
 	var elem = document.documentElement;
+
+	var synth = window.speechSynthesis;
+	var voice = undefined;
 
 	// Time before timer start in seconds
 	const preparationTime = 10;
@@ -37,7 +41,14 @@
 		time = time - 1;
 		if (time > 0) {
 			setTimeout(timer, 1000);
-			if (time < 4) {
+			// Say the name of the next exercise on the 6th second if we are not in the warming up timer or the last one
+			if (currentTimeIdx >= 0 &&
+				time === 6 &&
+				!(currentRound === +rounds && currentTimeIdx === timers.length - 1)
+			) {
+				var exerciseName = (currentTimeIdx < timers.length - 1) ? timers[currentTimeIdx+1].name : timers[0].name;
+				sayPhrase('Next exercise : ' + exerciseName);
+			} else if (time < 4) {
 				beepCourt.play();
 			}
 		} else {
@@ -47,6 +58,7 @@
 				launchTimer(currentTimeIdx);
 			// Check if there are rounds left
 			} else if (currentRound < rounds) {
+				sayPhrase('Round ' + currentRound + ' complete');
 				currentRound = ++currentRound;
 				currentTimeIdx = 0;
 				launchTimer(0);
@@ -97,6 +109,15 @@
         }
     }
 
+	function sayPhrase(text) {
+		if (voice && useVoice) {
+			var utterThis = new SpeechSynthesisUtterance(text);
+			utterThis.voice = voice;
+			utterThis.volume = volume;
+			synth.speak(utterThis);
+		}
+	}
+
 	/* Event handler */
 
 	// Update array with data from component
@@ -122,6 +143,8 @@
 				time = preparationTime;
 				name = 'Get ready';
 				color = 'green';
+				voice = synth.getVoices().filter(voice => voice.lang === 'en-US')[0];
+				sayPhrase('First exercise : ' + timers[0].name);
 				openFullscreen();
 				setTimeout(timer, 1000);
 				break;
@@ -178,6 +201,10 @@
 				<Timer id={time.id} name={time.name} on:update={handleUpdate} on:delete={handleDelete} />
 			{/each}
 			<button on:click={addTime}>Add time</button>
+			<p>
+				<input type="checkbox" name="voice" bind:checked={useVoice}>
+  				<label for="voice">Use voice reminder</label>
+			</p>
 			<button on:click={startTimer}>Start</button>
 		</div>
 	{/if}
