@@ -4,6 +4,15 @@
 
     export let id;
     export let name;
+    export let time;
+    
+	let minutes = 0;
+	let seconds = 0;
+
+    if (time > 0) {
+        seconds = time%60;
+        minutes = (time-seconds)/60;
+    }
 
     function sendUpdateTimer(time, name) {
 		dispatch('update', {
@@ -26,9 +35,6 @@
             seconds = seconds%60;
         }
     }
-
-	let minutes = 0;
-	let seconds = 0;
 </script>
 
 <div class="timer">

@@ -198,7 +198,7 @@
 				</div>
 			</div>
 			{#each timers as time}
-				<Timer id={time.id} name={time.name} on:update={handleUpdate} on:delete={handleDelete} />
+				<Timer id={time.id} name={time.name} time={time.time} on:update={handleUpdate} on:delete={handleDelete} />
 			{/each}
 			<button on:click={addTime}>Add time</button>
 			<p>

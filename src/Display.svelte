@@ -197,7 +197,7 @@
     .blue {
         background-color: #24c2ff;
 
-        .exercise {
+        .timer__screen__display__exercise {
             color: #396677;
         }
     }
