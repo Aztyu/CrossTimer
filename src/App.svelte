@@ -143,7 +143,7 @@
 				time = preparationTime;
 				name = 'Get ready';
 				color = 'green';
-				voice = synth.getVoices().filter(voice => voice.lang === 'en-US')[0];
+				voice = synth.getVoices().filter(voice => voice.lang === 'en-US' || voice.lang === 'en_US')[0];
 				sayPhrase('First exercise : ' + timers[0].name);
 				openFullscreen();
 				setTimeout(timer, 1000);

@@ -71,10 +71,10 @@
     <div class="timer {color}">
         <div class="timer__button">
                 {#if stop === true }
-                    <button on:click={resumeTimer}>Resume</button>
-                    <button on:click={resetTimer}>Reset</button>
+                    <img src="image/pause-resume.svg" alt="Pause or Resume" on:click={resumeTimer}>
+                    <img src="image/reset.svg" alt="Reset" on:click={resetTimer}>
                 {:else}
-                    <button on:click={stopTimer}>Stop</button>
+                    <img src="image/pause.svg" alt="Pause" on:click={stopTimer}>
                 {/if}
         </div>
 
@@ -89,7 +89,7 @@
                 {#if time > 0 }
                     <p class="timer__screen__display__round"><span>{currentRound}</span>/{rounds}</p>
                     <p class="timer__screen__display__time">{displayMinute}:{displaySeconds}</p>
-                    <p class="timer__screen__display__exercise">{name}</p>
+                    <p class="timer__screen__display__exercise {name.length > 15 ? 'long_txt' : ''}">{name}</p>
                 {/if}
             </div>
         </div>
@@ -109,6 +109,10 @@
             position: absolute;
             width: 98%;
             text-align: end;
+
+            img {
+                width: 1.5em;
+            }
         }
 
         &__screen {
@@ -155,7 +159,7 @@
                 }
 
                 &__round {
-                    font-size: 3em;
+                    font-size: 2em;
                     font-weight: 700;
                     line-height: 1.5em;
 
@@ -165,14 +169,18 @@
                 }
 
                 &__time {
-                    font-size: 11em;
+                    font-size: 8em;
                     font-weight: 400;
                     line-height: 1em;
                 }
 
                 &__exercise {
-                    font-size: 4em;
+                    font-size: 3em;
                     font-weight: 700;
+
+                    &.long_txt {
+                        font-size: 1.8em;
+                    }
                 }
             }
         }
