@@ -1,5 +1,7 @@
 <script>
+    import AutoComplete from './lib/AutoComplete.svelte'
     import { createEventDispatcher } from 'svelte';
+
     const dispatch = createEventDispatcher();
 
     export let id;
@@ -7,7 +9,13 @@
     export let time;
     
 	let minutes = 0;
-	let seconds = 0;
+    let seconds = 0;
+    let exerciseList = [
+        'Squat',
+        'Lunge',
+        'Sit-up',
+        'Burpees'
+    ]
 
     if (time > 0) {
         seconds = time%60;
@@ -44,7 +52,7 @@
         <input type="number" onfocus="this.value=''" bind:value={seconds} />
     </div>
     <div class="flex-2">
-        <input class="exercise" bind:value={name} />
+        <AutoComplete class="input" name="exercises" items="{exerciseList}" bind:search={name} minChar="1" />
     </div>
     <div>
         <button on:click={deleteTimer}>X</button> 
