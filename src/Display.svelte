@@ -7,10 +7,6 @@
     export let rounds;
     export let stop;
 
-    let displayMinute = '00';
-    let displaySeconds = '00';
-    let imgVolume = 'soundhigh';
-
     let oldVolume = volume;
 
     import { createEventDispatcher } from 'svelte';

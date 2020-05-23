@@ -49,7 +49,7 @@
     <div class="flex-2">
         <AutoComplete  name="exercises" items="{movements}" bind:search={name} minChar="1" />
     </div>
-    <img src="image/cancel.svg" on:click={deleteTimer} />
+    <img src="image/cancel.svg" alt="Delete timer" on:click={deleteTimer} />
 </div>
 
 <style lang="scss">

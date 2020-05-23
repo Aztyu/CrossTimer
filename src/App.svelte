@@ -1,6 +1,7 @@
 <script>
 	import Timer from './Timer.svelte';
 	import Display from './Display.svelte';
+	import { openFullscreen, closeFullscreen, sayPhrase } from './lib/functions.js';
 	
 	/* Initialize data */
 	let time = 0;
@@ -13,10 +14,6 @@
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
 	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
-	var elem = document.documentElement;
-
-	var synth = window.speechSynthesis;
-	var voice = undefined;
 
 	// Time before timer start in seconds
 	const preparationTime = 10;
@@ -47,7 +44,7 @@
 				!(currentRound === +rounds && currentTimeIdx === timers.length - 1)
 			) {
 				var exerciseName = (currentTimeIdx < timers.length - 1) ? timers[currentTimeIdx+1].name : timers[0].name;
-				sayPhrase('Next exercise : ' + exerciseName);
+				useVoice && sayPhrase('Next exercise : ' + exerciseName, volume);
 			} else if (time < 4) {
 				beepCourt.play();
 			}
@@ -58,7 +55,7 @@
 				launchTimer(currentTimeIdx);
 			// Check if there are rounds left
 			} else if (currentRound < rounds) {
-				sayPhrase('Round ' + currentRound + ' complete');
+				useVoice && sayPhrase('Round ' + currentRound + ' complete', volume);
 				currentRound = ++currentRound;
 				currentTimeIdx = 0;
 				launchTimer(0);
@@ -80,42 +77,6 @@
 	function nextRandomColor() {
 		// TODO better color managing
 		return colors[Math.floor(Math.random() * colors.length)];
-	}
-
-	function openFullscreen() {
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) { /* Firefox */
-            elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE/Edge */
-            elem.msRequestFullscreen();
-        }
-    }
-
-	function closeFullscreen() {
-        if (document.fullscreenElement === null) {
-            return;
-        }
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-    }
-
-	function sayPhrase(text) {
-		if (voice && useVoice) {
-			var utterThis = new SpeechSynthesisUtterance(text);
-			utterThis.voice = voice;
-			utterThis.volume = volume;
-			synth.speak(utterThis);
-		}
 	}
 
 	/* Event handler */
@@ -143,8 +104,7 @@
 				time = preparationTime;
 				name = 'Get ready';
 				color = 'green';
-				voice = synth.getVoices().filter(voice => voice.lang === 'en-US' || voice.lang === 'en_US')[0];
-				sayPhrase('First exercise : ' + timers[0].name);
+				useVoice && sayPhrase('First exercise : ' + timers[0].name, volume);
 				openFullscreen();
 				setTimeout(timer, 1000);
 				break;
