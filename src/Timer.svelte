@@ -46,14 +46,13 @@
     <div class="flex-2">
         <input class="exercise" bind:value={name} />
     </div>
-    <div>
-        <button on:click={deleteTimer}>X</button> 
-    </div>
+    <img src="image/cancel.svg" on:click={deleteTimer} />
 </div>
 
 <style lang="scss">
     .timer {
         display: flex;
+        align-items: center;
         margin: 8px;
 
         input[type=range] {
@@ -68,6 +67,11 @@
                 width: 100%;
                 text-align: center;
             }
+        }
+
+        img {
+            width: 32px;
+            margin-left: 4px;
         }
     }
 </style>

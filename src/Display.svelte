@@ -39,11 +39,6 @@
     function stopTimer() {
         send('stop');
     }
-
-    $: {
-        displayMinute = format(Math.floor(time/60));
-        displaySeconds = format(time%60);
-    }
 </script>
 
 {#if time > 0 }
@@ -80,7 +75,7 @@
             <div class="timer__screen__display">
                 {#if time > 0 }
                     <p class="timer__screen__display__round"><span>{currentRound}</span>/{rounds}</p>
-                    <p class="timer__screen__display__time">{displayMinute}:{displaySeconds}</p>
+                    <p class="timer__screen__display__time">{format(Math.floor(time/60))}:{format(time%60)}</p>
                     <p class="timer__screen__display__exercise {name.length > 15 ? 'long_txt' : ''}">{name}</p>
                 {/if}
             </div>
