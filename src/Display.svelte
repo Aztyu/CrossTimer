@@ -28,26 +28,6 @@
 		});
     }
 
-    function updateVolume(volume) {
-        if(volume !== oldVolume) {
-            oldVolume = volume;
-            
-            if (volume > 66) {
-                imgVolume = 'soundhigh';
-            } else if (volume > 33) {
-                imgVolume = 'soundmedium';
-            } else if (volume > 0) {
-                imgVolume = 'soundlow';
-            } else {
-                imgVolume = 'soundoff';
-            }
-
-            dispatch('volume', {
-                volume: volume,
-            });
-        }
-    }
-
     function resumeTimer() {
         send('resume');
     }
@@ -63,7 +43,6 @@
     $: {
         displayMinute = format(Math.floor(time/60));
         displaySeconds = format(time%60);
-        updateVolume(+volume);
     }
 </script>
 
@@ -82,7 +61,20 @@
             <div class="timer__screen__volume">
                 <input type="range" orient="vertical" min="0" max="100" bind:value={volume}>
                 <span>
-                    <img src="image/{imgVolume}.png" alt="Sound icon" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136.033 136.446" height="515.7" width="514.139">
+                        <g stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+                            {#if volume > 0 }
+                                <path d="M78.73 42.177c16.991 19.98 13.405 37.396-.464 53.53" fill="none" stroke-width="8.35"/>
+                            {/if}
+                            {#if volume > 33 }
+                                <path d="M92.948 27.21c23.901 31.45 18.856 58.862-.654 84.256" fill="none" stroke-width="10.154"/>
+                            {/if}
+                            {#if volume > 66 }    
+                                <path d="M106.652 12.544c34.815 41.567 27.466 77.796-.951 111.358" fill="none" stroke-width="10.088"/>
+                            {/if}
+                            <path d="M3.075 49.04l17.516.31 39.526-28.57.465 95.591-39.836-27.643H2.92z" stroke-width="3.839" paint-order="stroke fill markers"/>
+                        </g>
+                    </svg>
                 </span>
             </div>
             <div class="timer__screen__display">
@@ -131,8 +123,9 @@
                     font-size: 1.5em;
                     font-weight: 700;
 
-                    img {
+                    svg {
                         width: 32px;
+                        height: 32px;
                     }
                 }
 
