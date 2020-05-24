@@ -8,16 +8,11 @@
     export let id;
     export let name;
     export let time;
-    
-	let minutes = 0;
+
+    let minutes = 0;
     let seconds = 0;
 
-    if (time > 0) {
-        seconds = time%60;
-        minutes = (time-seconds)/60;
-    }
-
-    function sendUpdateTimer(time, name) {
+    function sendUpdateTimer(time) {
 		dispatch('update', {
             id: id,
 			time: time,
@@ -31,12 +26,14 @@
         })
     }
     
+    $: seconds = (time > 0) ? time%60 : 0;
+    $: minute = (time > 0) ? (time-(time%60))/60 : 0;
     $: {
-        sendUpdateTimer(+minutes * 60 + +seconds, name);
         if (+seconds > 59) {
             minutes = +minutes + 1;
             seconds = seconds%60;
         }
+        sendUpdateTimer(+minutes * 60 + +seconds);
     }
 </script>
 

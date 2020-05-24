@@ -132,6 +132,10 @@
 		}
 	}
 
+	function updateId() {
+		let nextId = Math.max(...timers.map(timer => timer.id)) + 1;
+	}
+
 	function handleVolume(event) {
 		localStorage.setItem('volume', event.detail.volume);
 		const volumeNb = event.detail.volume/100;
@@ -143,7 +147,7 @@
 		let id = event.detail.id;
 
 		timers = timers.filter(obj => obj.id !== id );
-		let nextId = Math.max(...timers.map(timer => timer.id)) + 1;
+		updateId();
 	}
 
 	/* Button action */
@@ -169,6 +173,7 @@
 			var timerData = timersArray[timerToLoad];
 			rounds = timerData.rounds;
 			timers = timerData.time;
+			updateId();
 		}
 	}
 </script>
@@ -183,7 +188,7 @@
 					<input bind:value={rounds} />
 				</div>
 			</div>
-			{#each timers as time}
+			{#each timers as time (time.id)}
 				<Timer id={time.id} name={time.name} time={time.time} on:update={handleUpdate} on:delete={handleDelete} />
 			{/each}
 			<button on:click={addTime}>Add time</button>
@@ -192,18 +197,23 @@
   				<label for="voice">Use voice reminder</label>
 			</p>
 			<button on:click={startTimer}>Start</button>
-			<div>
-				<input bind:value={timerName} placeholder="Timer name"/>
-				<button on:click={saveTimer}>Save</button>
+			<div class="form__manage">
+				<h2>Manage timers</h2>
+				<div >
+					<input bind:value={timerName} placeholder="Name currrent timer"/>
+					<button on:click={saveTimer}>Save</button>
+				</div>
+				<div>
+					<select bind:value={timerToLoad}>
+					<option value="">Choose existing</option>
+						{#each Object.keys(timersArray) as name}
+							<option value={name}>{name}</option>
+						{/each}
+					</select>
+					<button on:click={loadTimer}>Load</button>
+				</div>
 			</div>
-			<div>
-				<select bind:value={timerToLoad}>
-					{#each Object.keys(timersArray) as name}
-						<option value={name}>{name}</option>
-					{/each}
-				</select>
-				<button on:click={loadTimer}>Load</button>
-			</div>
+			
 		</div>
 	{/if}
 
@@ -230,6 +240,13 @@
 
 	button {
 		margin: 8px;
+		border-radius: 8px;
+		background-color: #ff7c4a;
+		color: white;
+		font-size: 1em;
+		text-transform: uppercase;
+		border: none;
+		cursor: pointer;
 	}
 
 	.form {
@@ -240,7 +257,7 @@
 		margin: auto;
 		
 		h1 {
-			color: #ff3e00;
+			color: #ff7c4a;
 			text-transform: uppercase;
 			font-size: 4em;
 			font-weight: 100;
@@ -253,6 +270,26 @@
 
 			input {
 				width: 100%;
+			}
+		}
+
+		&__manage {
+			margin-top: 32px;
+
+			h2 {
+				color: #ff7c4a;
+				text-transform: uppercase;
+				font-size: 1.5em;
+				font-weight: 400;
+			}
+			
+			div {
+				display: flex;
+
+				input, select {
+					flex: 1;
+					margin: 8px;
+				}
 			}
 		}
 	}
