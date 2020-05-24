@@ -14,6 +14,15 @@
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
 	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
+	let timerName = '';
+	let timerToLoad = '';
+	
+	var timersArray = localStorage.getItem('timers');
+	if (!timersArray) {
+		timersArray = {};
+	} else {
+		timersArray = JSON.parse(timersArray);
+	}
 
 	// Time before timer start in seconds
 	const preparationTime = 10;
@@ -144,7 +153,24 @@
 
 	function startTimer() {
 		handleTimer({detail: {action: 'start'}});
-    }
+	}
+	
+	function saveTimer() {
+		timersArray[timerName] = {
+			rounds: rounds,
+			time: timers,
+		};
+
+		localStorage.setItem('timers', JSON.stringify(timersArray));
+	}
+
+	function loadTimer() {
+		if (!!timerToLoad) {
+			var timerData = timersArray[timerToLoad];
+			rounds = timerData.rounds;
+			timers = timerData.time;
+		}
+	}
 </script>
 
 <main>
@@ -166,6 +192,18 @@
   				<label for="voice">Use voice reminder</label>
 			</p>
 			<button on:click={startTimer}>Start</button>
+			<div>
+				<input bind:value={timerName} placeholder="Timer name"/>
+				<button on:click={saveTimer}>Save</button>
+			</div>
+			<div>
+				<select bind:value={timerToLoad}>
+					{#each Object.keys(timersArray) as name}
+						<option value={name}>{name}</option>
+					{/each}
+				</select>
+				<button on:click={loadTimer}>Load</button>
+			</div>
 		</div>
 	{/if}
 
