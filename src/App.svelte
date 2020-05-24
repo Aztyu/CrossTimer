@@ -1,8 +1,13 @@
 <script>
 	import Timer from './Timer.svelte';
 	import Display from './Display.svelte';
+	import Toast from './lib/Toast.svelte';
+	import { onDestroy } from 'svelte';
+
 	import { openFullscreen, closeFullscreen, sayPhrase } from './lib/functions.js';
 	import { playBeepLong, playBeepCourt, updateGain } from './lib/audio.js';
+	import { connectFirebase, disconnectFirebase, addTimer } from './lib/firebase.js';
+	import { user, timerStore, toast } from './lib/store.js';
 
 	/* Initialize data */
 	let time = 0;
@@ -20,6 +25,7 @@
 
 	let timerName = '';
 	let timerToLoad = '';
+	var userFirebase = null;
 	
 	var timersArray = localStorage.getItem('timers');
 	if (!timersArray) {
@@ -37,6 +43,16 @@
 	let currentRound = 1;
 	let stop = false;
 	let colors = ['blue', 'yellow', 'green'];
+
+	onDestroy(user.subscribe(value => {
+		userFirebase = value;
+	}));
+
+	onDestroy(timerStore.subscribe(value => {
+		if (!!value) {
+			timersArray = value;
+		}
+	}));
 
 	/* Business logic */
 	var timer = () => {
@@ -82,6 +98,10 @@
 		name = timers[idx].name;
 		color = timers[idx].color;
 		setTimeout(timer, 1000);
+	}
+
+	function showToast(message, time) {
+		toast.set({message: message, time: time});
 	}
 
 	function nextRandomColor() {
@@ -145,13 +165,13 @@
 	function handleDelete(event) {
 		let id = event.detail.id;
 
-		timers = timers.filter(obj => obj.id !== id );
+		timers = timers.filter(obj => obj.id !== id);
 		updateId();
 	}
 
 	/* Button action */
 	function addTime() {
-		timers = [...timers, {id: nextId++, time: 0, color: nextRandomColor()}]
+		timers = [...timers, {id: nextId++, time: 0, color: nextRandomColor()}];
 	}
 
 	function startTimer() {
@@ -164,7 +184,17 @@
 			time: timers,
 		};
 
-		localStorage.setItem('timers', JSON.stringify(timersArray));
+		showToast("Saved " + timerName, 3000);
+
+		if (!!userFirebase) {
+			addTimer({
+				name: timerName,
+				rounds: rounds,
+				time: timers,
+			});
+		} else {
+			localStorage.setItem('timers', JSON.stringify(timersArray));
+		}
 	}
 
 	function loadTimer() {
@@ -173,14 +203,31 @@
 			rounds = timerData.rounds;
 			timers = timerData.time;
 			updateId();
+			showToast("Loaded " + timerToLoad, 3000);
 		}
 	}
+
+	function connect() {
+		connectFirebase();
+	};
+
+	function disconnect() {
+		disconnectFirebase();
+	};
 </script>
 
 <main>
 	{#if time === 0 }
 		<div class="form">
-			<h1>Timer</h1>
+			<div class="form__title">
+				<h1>Timer</h1>
+				{#if userFirebase === null}
+					<img src="image/user.svg" on:click={connect}>
+				{:else}
+					<img src={userFirebase.photoURL} on:click={disconnect}>
+				{/if}
+			</div>
+
 			<div class="form__rounds">
 				<span class="flex">Rounds</span>
 				<div class="flex-2">
@@ -199,7 +246,7 @@
 			<div class="form__manage">
 				<h2>Manage timers</h2>
 				<div >
-					<input bind:value={timerName} placeholder="Name currrent timer"/>
+					<input bind:value={timerName} placeholder="Name current timer"/>
 					<button on:click={saveTimer}>Save</button>
 				</div>
 				<div>
@@ -227,6 +274,8 @@
 		on:timer={handleTimer}
 		on:volume={handleVolume}
 	/>
+
+	<Toast />
 </main>
 
 <style lang="scss">
@@ -255,11 +304,25 @@
 		max-width: 400px;
 		margin: auto;
 		
-		h1 {
-			color: #ff7c4a;
-			text-transform: uppercase;
-			font-size: 4em;
-			font-weight: 100;
+		&__title {
+			display: flex;
+			align-items: baseline;
+
+			h1 {
+				flex: 1;
+				color: #ff7c4a;
+				text-transform: uppercase;
+				font-size: 4em;
+				font-weight: 100;
+			}
+
+			img {
+				width: 64px;
+				border-radius: 32px;
+				border: solid 3px #ff7c4a;
+				border-radius: 50px;
+				cursor: pointer;
+			}
 		}
 
 		&__rounds {
