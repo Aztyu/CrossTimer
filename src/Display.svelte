@@ -12,6 +12,16 @@
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
 
+    function updateVolume(volume) {
+        if(volume !== oldVolume) {
+            oldVolume = volume;
+            
+            dispatch('volume', {
+                volume: volume,
+            });
+        }
+    }
+
     // Format time for display
     function format(time) {
         return time < 10 ? '0' + time : time;
@@ -34,6 +44,10 @@
 
     function stopTimer() {
         send('stop');
+    }
+
+    $: {
+        updateVolume(+volume);
     }
 </script>
 
