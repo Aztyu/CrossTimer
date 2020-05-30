@@ -12,7 +12,7 @@
     let minutes = 0;
     let seconds = 0;
 
-    function sendUpdateTimer(time) {
+    function sendUpdateTimer(time, name) {
 		dispatch('update', {
             id: id,
 			time: time,
@@ -33,7 +33,7 @@
             minutes = +minutes + 1;
             seconds = seconds%60;
         }
-        sendUpdateTimer(+minutes * 60 + +seconds);
+        sendUpdateTimer(+minutes * 60 + +seconds, name);
     }
 </script>
 

@@ -2,7 +2,8 @@
 	import Timer from './Timer.svelte';
 	import Display from './Display.svelte';
 	import { openFullscreen, closeFullscreen, sayPhrase } from './lib/functions.js';
-	
+	import { playBeepLong, playBeepCourt, updateGain } from './lib/audio.js';
+
 	/* Initialize data */
 	let time = 0;
 	let name = '';
@@ -13,7 +14,10 @@
 		{ id: 1, time: 0, name: 'Work', color: 'yellow' },
 		{ id: 2, time: 0, name: 'Rest', color: 'blue' }
 	];
+
 	let volume = (!!localStorage.getItem('volume')) ? localStorage.getItem('volume') : 100;
+	updateGain(volume/100);
+
 	let timerName = '';
 	let timerToLoad = '';
 	
@@ -27,11 +31,6 @@
 	// Time before timer start in seconds
 	const preparationTime = 10;
 
-	var beepLong = new Audio('sound/beeplong.mp3');
-	var beepCourt = new Audio('sound/beepcourt.mp3');
-	beepLong.volume = volume/100;
-	beepCourt.volume = volume/100;
-
 	/* Internal values */
 	let nextId = 3; //keep track of timers
 	let currentTimeIdx = 0;
@@ -40,25 +39,27 @@
 	let colors = ['blue', 'yellow', 'green'];
 
 	/* Business logic */
-	var timer = function() {
+	var timer = () => {
 		if (stop) {
 			return;
 		}
-		time = time - 1;
-		if (time > 0) {
+		var bufferTime = time - 1;
+		if (bufferTime > 0) {
 			setTimeout(timer, 1000);
 			// Say the name of the next exercise on the 6th second if we are not in the warming up timer or the last one
 			if (currentTimeIdx >= 0 &&
-				time === 6 &&
+				bufferTime === 6 &&
 				!(currentRound === +rounds && currentTimeIdx === timers.length - 1)
 			) {
 				var exerciseName = (currentTimeIdx < timers.length - 1) ? timers[currentTimeIdx+1].name : timers[0].name;
 				useVoice && sayPhrase('Next exercise : ' + exerciseName, volume);
-			} else if (time < 4) {
-				beepCourt.play();
+			} else if (bufferTime < 3) {
+				playBeepCourt();
 			}
+			time = bufferTime;
 		} else {
-			beepLong.play();
+			playBeepLong();
+			time = bufferTime;
 			// End of timers
 			if (++currentTimeIdx < timers.length) {
 				launchTimer(currentTimeIdx);
@@ -70,7 +71,7 @@
 				launchTimer(0);
 			// End of the rounds and timers
 			} else {
-				setTimeout(function() { beepLong.play()}, 500);
+				setTimeout(function() { playBeepLong() }, 500);
 				closeFullscreen();
 			}
 		}
@@ -138,9 +139,7 @@
 
 	function handleVolume(event) {
 		localStorage.setItem('volume', event.detail.volume);
-		const volumeNb = event.detail.volume/100;
-		beepCourt.volume = volumeNb;
-		beepLong.volume = volumeNb;
+		updateGain(event.detail.volume/100);
 	}
 
 	function handleDelete(event) {
