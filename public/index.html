@@ -3,16 +3,25 @@
 <head>
 	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width,initial-scale=1'>
-
+	<meta name="theme-color" content="#ff6123"/>
+	
 	<title>CrossTimer</title>
 
 	<link rel='icon' type='image/png' href='/favicon.png'>
 	<link rel='stylesheet' href='/global.css'>
 	<link rel='stylesheet' href='/build/bundle.css'>
+	<link rel='manifest' href='/manifest.json'>
 
 	<script defer src='/build/bundle.js'></script>
 </head>
 
 <body>
 </body>
+<script type="module">
+	// This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
+	import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+
+	const el = document.createElement('pwa-update');
+	document.body.appendChild(el);
+</script>
 </html>
