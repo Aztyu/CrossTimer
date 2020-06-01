@@ -222,9 +222,9 @@
 			<div class="form__title">
 				<h1>Timer</h1>
 				{#if userFirebase === null}
-					<img src="image/user.svg" on:click={connect}>
+					<img src="image/user.svg" alt="Connect icon" on:click={connect}>
 				{:else}
-					<img src={userFirebase.photoURL} on:click={disconnect}>
+					<img src={userFirebase.photoURL} alt="Profil picture" on:click={disconnect}>
 				{/if}
 			</div>
 
@@ -289,7 +289,7 @@
 	button {
 		margin: 8px;
 		border-radius: 8px;
-		background-color: #ff7c4a;
+		background-color: #ff6123;
 		color: white;
 		font-size: 1em;
 		text-transform: uppercase;
@@ -302,15 +302,17 @@
 		display: flex;
 		flex-direction: column;
 		max-width: 400px;
+		width: 100%;
 		margin: auto;
 		
 		&__title {
 			display: flex;
 			align-items: baseline;
+			margin: 4px 8px;
 
 			h1 {
 				flex: 1;
-				color: #ff7c4a;
+				color: #ff6123;
 				text-transform: uppercase;
 				font-size: 4em;
 				font-weight: 100;
@@ -319,7 +321,7 @@
 			img {
 				width: 64px;
 				border-radius: 32px;
-				border: solid 3px #ff7c4a;
+				border: solid 3px #ff6123;
 				border-radius: 50px;
 				cursor: pointer;
 			}
@@ -339,7 +341,7 @@
 			margin-top: 32px;
 
 			h2 {
-				color: #ff7c4a;
+				color: #ff6123;
 				text-transform: uppercase;
 				font-size: 1.5em;
 				font-weight: 400;
@@ -351,6 +353,10 @@
 				input, select {
 					flex: 1;
 					margin: 8px;
+				}
+
+				input {
+    				min-width: 0;
 				}
 			}
 		}
