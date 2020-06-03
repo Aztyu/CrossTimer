@@ -184,6 +184,37 @@
         }
     }
 
+    @media screen and (max-width: 1000px) {
+        .timer__screen {
+            flex-direction: column;
+            align-items: stretch;
+
+            &__volume {
+                order: 2;
+                width: auto;
+                display: flex;
+                flex-direction: row;
+                padding: 0px 12px;
+
+                input[type=range][orient=vertical] {
+                    flex: 1;
+                    -webkit-appearance: auto;
+                    width: auto;
+                    height: auto;
+                    margin-right: 16px;
+                }
+
+                span {
+                    margin-top: 0;
+                }
+            }
+
+            &__display {
+                order: 1;
+            }
+        }
+    }
+
     .yellow {
         background-color: #fdfd72;
 
