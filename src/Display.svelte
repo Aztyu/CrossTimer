@@ -143,6 +143,7 @@
 
                     height: 300px;
                     margin-left: 32px;
+                    min-width: 0px;
                 }
             }
 
@@ -184,7 +185,7 @@
         }
     }
 
-    @media screen and (max-width: 1000px) {
+    @media screen and (max-width: 650px) {
         .timer__screen {
             flex-direction: column;
             align-items: stretch;
@@ -211,6 +212,16 @@
 
             &__display {
                 order: 1;
+
+                &__time {
+                    font-size: 6em;
+                    margin-top: 32px;
+                    margin-bottom: 32px;
+                }
+
+                &__exercise {
+                    font-size: 2em;
+                }
             }
         }
     }

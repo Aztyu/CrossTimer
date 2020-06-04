@@ -279,6 +279,8 @@
 </main>
 
 <style lang="scss">
+	@import "./styles/theme.scss";
+
 	main {
 		text-align: center;
 		display: flex;
@@ -289,7 +291,7 @@
 	button {
 		margin: 8px;
 		border-radius: 8px;
-		background-color: #ff6123;
+		background-color: $main-color;
 		color: white;
 		font-size: 1em;
 		text-transform: uppercase;
@@ -312,7 +314,7 @@
 
 			h1 {
 				flex: 1;
-				color: #ff6123;
+				color: $main-color;
 				text-transform: uppercase;
 				font-size: 4em;
 				font-weight: 100;
@@ -321,7 +323,7 @@
 			img {
 				width: 64px;
 				border-radius: 32px;
-				border: solid 3px #ff6123;
+				border: solid 3px $main-color;
 				border-radius: 50px;
 				cursor: pointer;
 			}
@@ -341,7 +343,7 @@
 			margin-top: 32px;
 
 			h2 {
-				color: #ff6123;
+				color: $main-color;
 				text-transform: uppercase;
 				font-size: 1.5em;
 				font-weight: 400;
