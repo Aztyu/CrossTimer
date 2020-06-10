@@ -105,8 +105,14 @@
 	}
 
 	function nextRandomColor() {
-		// TODO better color managing
-		return colors[Math.floor(Math.random() * colors.length)];
+		// Get last time color and remove it from potentiel choices
+		const lastId = Math.max(...timers.map(timer => timer.id));
+		const lastTimer = timers.filter(timer => timer.id === lastId)[0];
+		var previousColor = lastTimer.color;
+		var colorChoices = colors.filter(color => color !== previousColor);
+
+		// Get randon color from the filtered choice
+		return colorChoices[Math.floor(Math.random() * colorChoices.length)];
 	}
 
 	/* Event handler */
